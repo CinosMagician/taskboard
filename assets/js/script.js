@@ -13,10 +13,12 @@ function generateTaskId() {
 function createTaskCard(task) {
     let card = `
     <div id="task-${task.id}" class="card task-card mb-3" data-task-id="${task.id}">
-        <div class="card-body">
+        <div class="card-header">    
             <h5 class="card-title">${task.title}</h5>
+        </div>
+        <div class="card-body">
             <p class="card-text">${task.description}</p>
-            <p class="card-text">${task.dueDate}</p>
+            <p class="card-text">Due Date: ${task.dueDate}</p>
             <button class="btn btn-danger delete-task">Delete</button>
         </div>
     </div>
@@ -42,6 +44,10 @@ function renderTaskList() {
 
 // Todo: create a function to handle adding a new task
 function handleAddTask(event){
+    if(taskList.length === 0){
+        nextId = 1;
+        localStorage.setItem("nextId", nextId);
+    }
     event.preventDefault();
     let title = $("#task-title").val();
     let description = $("#task-description").val();
@@ -77,6 +83,15 @@ function handleDrop(event, ui) {
     taskList[taskIndex].status = newStatus;
     localStorage.setItem("tasks", JSON.stringify(taskList));
     renderTaskList();
+    let taskElement = document.getElementById(`task-${taskId}`);
+    if (taskElement) {
+        if (newStatus === "done") {
+            taskElement.style.backgroundColor = 'lightgray';
+            taskElement.style.color = 'black';
+        } else {
+            applyStyle(taskId);
+        }
+    }
 }
 
 // Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
@@ -99,8 +114,9 @@ $(document).ready(function () {
 function applyStyle(taskId) {
     let taskElement = document.getElementById(`task-${taskId}`);
     if (taskElement) {
-    const backColors = ['lightblue', 'lightgreen', 'lightcoral', 'lightyellow', 'lightsalmon', 'lightseagreen'];
-    const colors = ['darkblue', 'darkgreen', 'purple', 'grey', 'red', 'darkgreen'];
+    const backColors = ['lightblue', 'lightgreen', 'lightcoral', 'lightyellow', 'lightsalmon', 'lightseagreen', `#F4BAFF`];
+    const colors = ['darkblue', 'darkgreen', 'purple', 'grey', 'red', 'darkgreen', `darkpurple`];
+    const headerColors = [`lightcyan`, `limegreen`, `pink`, `gold`, `#F4BAA4`, `#20E4AA`, `#D953F4`];
     let colorIndex = 0;
     while (taskId > backColors.length) {
         taskId = taskId - backColors.length;
@@ -108,5 +124,13 @@ function applyStyle(taskId) {
     colorIndex = taskId - 1;
     taskElement.style.backgroundColor = backColors[colorIndex];
     taskElement.style.color = colors[colorIndex];
-    }
+    taskElement.querySelector(`.card-header`).style.backgroundColor = headerColors[colorIndex];
+    
+    let task = taskList.find(task => task.id === taskId);
+    if (task && task.status === "done") {
+        taskElement.style.backgroundColor = 'lightgray';
+        taskElement.style.color = 'black';
+        taskElement.querySelector(`.card-header`).style.backgroundColor = `lightgrey`;
+        }
+    }    
 }

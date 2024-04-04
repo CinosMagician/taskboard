@@ -31,3 +31,7 @@ body {
   background-color: #157347;
   border-color: #146c43;
 }
+
+.card-title {
+  margin-bottom: 0;
+}
