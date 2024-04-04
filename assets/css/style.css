@@ -14,3 +14,20 @@ body {
 .task-card:hover {
   cursor: grab;
 }
+
+.modal-header {
+  color: rgb(28, 145, 184);
+  background-color: lightgray;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.btn-primary:hover {
+  color: #fff;
+  background-color: #157347;
+  border-color: #146c43;
+}
