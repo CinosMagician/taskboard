@@ -1,4 +1,4 @@
-# taskboard
+# Taskboard
 
 Here is a Task Manager Board, where you can add your tasks to this board, organised them into a 'To Do', 'In Progress' and 'Done' statuses to keep track.
 
