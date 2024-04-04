@@ -2,6 +2,7 @@
 // Here we are saying or [] for if we have no data yet and same goes with nextId as if we have no id we need to set it to 1 otherwise it would be null
 let taskList = JSON.parse(localStorage.getItem("tasks")) || [];
 let nextId = JSON.parse(localStorage.getItem("nextId")) || 1;
+let taskId = nextId - 1;
 
 // Todo: create a function to generate a unique task id
 function generateTaskId() {
@@ -11,7 +12,7 @@ function generateTaskId() {
 // Todo: create a function to create a task card
 function createTaskCard(task) {
     let card = `
-    <div id="task${task.id}" class="card task-card mb-3" data-task-id=${task.id}">
+    <div id="task-${task.id}" class="card task-card mb-3" data-task-id="${task.id}">
         <div class="card-body">
             <h5 class="card-title">${task.title}</h5>
             <p class="card-text">${task.description}</p>
@@ -25,9 +26,17 @@ function createTaskCard(task) {
 
 // Todo: create a function to render the task list and make cards draggable
 function renderTaskList() {
+    $(".lane .task-card").remove();
     taskList.forEach(task => {
         $(`#${task.status}-cards`).append(createTaskCard(task));
-        // to add in a function call to add styles to each card6
+        // to add in a function call to add styles to each card
+    });
+    $(".task-card").draggable({
+        revert: function(droppable) {
+            return !droppable;
+        },
+        revertDuration: 0,
+        zIndex: 1000
     });
 }
 
@@ -48,16 +57,26 @@ function handleAddTask(event){
     localStorage.setItem("tasks", JSON.stringify(taskList));
     localStorage.setItem("nextId", nextId);
     renderTaskList();
+    $("#formModal").modal("hide");
 }
 
 // Todo: create a function to handle deleting a task
 function handleDeleteTask(event){
-
+    let taskId = $(event.target).closest(".task-card").data("task-id");
+    taskList = taskList.filter(task => task.id !== taskId);
+    localStorage.setItem("tasks", JSON.stringify(taskList));
+    renderTaskList();
 }
 
 // Todo: create a function to handle dropping a task into a new status lane
 function handleDrop(event, ui) {
-
+    let taskId = ui.draggable.data("task-id");
+    let newStatus = $(event.target).closest(".lane").attr("id");
+    console.log("Dropped task ID:", taskId, "into column:", newStatus);
+    let taskIndex = taskList.findIndex(task => task.id === taskId);
+    taskList[taskIndex].status = newStatus;
+    localStorage.setItem("tasks", JSON.stringify(taskList));
+    renderTaskList();
 }
 
 // Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
