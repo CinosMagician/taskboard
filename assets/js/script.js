@@ -89,6 +89,10 @@ $(document).ready(function () {
         accept: ".task-card",
         drop: handleDrop
     });
+    if(taskList.length === 0){
+        nextId = 1;
+        localStorage.setItem("nextId", nextId);
+    }
 });
 
 // make a function to add styles to each card
