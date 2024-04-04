@@ -15,23 +15,15 @@ body {
   cursor: grab;
 }
 
+/* These are my own style changes */
+
+/* This changes the header color for the modal to match the green for the button and changes the text to white*/
 .modal-header {
-  color: rgb(28, 145, 184);
-  background-color: lightgray;
-}
-
-.btn-primary {
-  color: #fff;
+  color: white;
   background-color: #198754;
-  border-color: #198754;
 }
 
-.btn-primary:hover {
-  color: #fff;
-  background-color: #157347;
-  border-color: #146c43;
-}
-
+/* This reduces the margin at the bottom to be 0 to make it look more centered and less spaced */
 .card-title {
   margin-bottom: 0;
 }
