@@ -87,7 +87,6 @@ function handleDeleteTask(event){
 function handleDrop(event, ui) {
     let taskId = ui.draggable.data("task-id");
     let newStatus = $(event.target).closest(".lane").attr("id");
-    console.log("Dropped task ID:", taskId, "into column:", newStatus);
     let taskIndex = taskList.findIndex(task => task.id === taskId);
     taskList[taskIndex].status = newStatus;
     localStorage.setItem("tasks", JSON.stringify(taskList));
@@ -118,33 +117,44 @@ $(document).ready(function () {
     });
 });
 
-// This function was created to handle the stlying for the tasks while in the To do or in Progress coloumns
-// to have a cycle of color styles achieved, I have made arrays with color values inserted into them.
-// We then check the id of the task and assign the colors to the position of the array.
+// This function was created to handle the stlying for the tasks based on the Due Date. if the task is overdue 
 function applyStyle(taskId) {
     let taskElement = document.getElementById(`task-${taskId}`);
     if (taskElement) {
-    const backColors = ['lightblue', 'lightgreen', 'lightcoral', 'lightyellow', 'lightsalmon', 'lightseagreen', `#F4BAFF`];
-    const colors = ['darkblue', 'darkgreen', 'purple', 'grey', 'red', 'darkgreen', `darkpurple`];
-    const headerColors = [`lightcyan`, `limegreen`, `pink`, `gold`, `#F4BAA4`, `#20E4AA`, `#D953F4`];
-    let colorIndex = 0;
-    // This while loop checks for when the id exceeds our color array length and reduces it by the length of our color array
-    // until it is within the color array length range so that events always have color, even if you added 20.
-    while (taskId > backColors.length) {
-        taskId = taskId - backColors.length;
-    }
-    // We then reduce the value by 1 as the index of an array starts at 0
-    colorIndex = taskId - 1;
-    taskElement.style.backgroundColor = backColors[colorIndex];
-    taskElement.style.color = colors[colorIndex];
-    taskElement.querySelector(`.card-header`).style.backgroundColor = headerColors[colorIndex];
- 
-    // We also have our check here if a task is in the "Done" section to style it as we call this function when the page loads
-    let task = taskList.find(task => task.id === taskId);
-    if (task && task.status === "done") {
+        let task = taskList.find(task => task.id === taskId);
+        if (task) {
+            // Get today's date using day.js
+            let today = dayjs().startOf('day');
+
+            // Parse the due date
+            let dueDate = dayjs(task.dueDate).startOf('day');
+
+            // Calculate difference in days
+            let diffDays = dueDate.diff(today, 'day');
+
+            // Apply color based on due date
+            if (diffDays < 0) {
+                // Past due (Red)
+                taskElement.style.backgroundColor = 'darkred';
+                taskElement.style.color = 'white';
+                taskElement.querySelector(`.card-header`).style.backgroundColor = `red`;
+            } else if (diffDays <= 1) {
+                // Due within 2 days (Yellow)
+                taskElement.style.backgroundColor = '#FFE066';
+                taskElement.style.color = 'black';
+                taskElement.querySelector(`.card-header`).style.backgroundColor = `yellow`;
+            } else {
+                // Otherwise its default (Grey)
+                taskElement.style.backgroundColor = 'lightgray';
+                taskElement.style.color = 'black';
+                taskElement.querySelector(`.card-header`).style.backgroundColor = `lightgrey`;
+            }
+        }
+        // We also have our check here if a task is in the "Done" section to style it as we call this function when the page loads
+        if (task && task.status === "done") {
         taskElement.style.backgroundColor = 'lightgray';
         taskElement.style.color = 'black';
         taskElement.querySelector(`.card-header`).style.backgroundColor = `lightgrey`;
         }
-    }    
+    }
 }
