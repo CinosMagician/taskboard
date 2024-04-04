@@ -29,7 +29,7 @@ function renderTaskList() {
     $(".lane .task-card").remove();
     taskList.forEach(task => {
         $(`#${task.status}-cards`).append(createTaskCard(task));
-        // to add in a function call to add styles to each card
+        applyStyle(task.id);
     });
     $(".task-card").draggable({
         revert: function(droppable) {
@@ -51,7 +51,7 @@ function handleAddTask(event){
         title: title,
         description: description,
         dueDate: dueDate,
-        status: "todo"
+        status: "to-do"
     };
     taskList.push(newTask);
     localStorage.setItem("tasks", JSON.stringify(taskList));
@@ -92,6 +92,17 @@ $(document).ready(function () {
 });
 
 // make a function to add styles to each card
-// function addStyles(taskId) {
-
-// }
+function applyStyle(taskId) {
+    let taskElement = document.getElementById(`task-${taskId}`);
+    if (taskElement) {
+    const backColors = ['lightblue', 'lightgreen', 'lightcoral', 'lightyellow', 'lightsalmon', 'lightseagreen'];
+    const colors = ['darkblue', 'darkgreen', 'purple', 'grey', 'red', 'darkgreen'];
+    let colorIndex = 0;
+    while (taskId > backColors.length) {
+        taskId = taskId - backColors.length;
+    }
+    colorIndex = taskId - 1;
+    taskElement.style.backgroundColor = backColors[colorIndex];
+    taskElement.style.color = colors[colorIndex];
+    }
+}
